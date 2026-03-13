@@ -900,11 +900,19 @@ loading.style.display="flex"
 
 loadingText.innerText=text
 
+document.querySelectorAll("button").forEach(btn=>{
+btn.disabled = true
+})
+
 }
 
 function hideLoading(){
 
 loading.style.display="none"
+
+document.querySelectorAll("button").forEach(btn=>{
+btn.disabled = false
+})
 
 }
 </script>
