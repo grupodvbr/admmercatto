@@ -602,8 +602,8 @@ const grupos={}
 
 data.forEach(ev=>{
 
-const d=new Date(ev.data)
-
+const d = new Date(ev.data + "T00:00")
+  
 if(d>=dataInicio && d<=dataFim){
 
 if(!grupos[ev.data])grupos[ev.data]=[]
@@ -645,8 +645,8 @@ lista.innerHTML+=`
 
 <div class="dia">
 
-${new Date(d).getDate()}
-<small>${new Date(d).toLocaleString('pt-BR',{month:'short'})}</small>
+${d.getDate()}
+<small>${d.toLocaleString('pt-BR',{month:'short'})}</small>
 
 </div>
 
