@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+ <title>MERCATTO- DELÍCIA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; display: flex; justify-content: center; padding: 30px; }
+    .container { background: #fff; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); max-width: 500px; width: 100%; padding: 25px; position: relative; }
+    h2 { text-align: center; color: #333; margin-bottom: 20px; }
+
+    label { display: block; margin: 12px 0 5px; font-weight: bold; }
+    input, select, textarea {
+      width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;
+    }
+
+    .unidades { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+    .unidades button {
+      flex: 1 1 25%; padding: 8px; font-size: 14px; border: 1px solid #2196F3; background: #fff;
+      border-radius: 20px; cursor: pointer;
+    }
+    .unidades button.ativo { background: #2196F3; color: #fff; }
+
+    textarea { resize: vertical; min-height: 60px; }
+
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+
+    button { width: 100%; padding: 12px; margin: 5px 0; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; }
+    .btn-blue { background: #2196F3; color: #fff; }
+    .btn-red { background: #f44336; color: #fff; }
+
+    #msg { text-align: center; margin-top: 10px; font-weight: bold; }
+
+    /* SPINNER */
+    #spinner {
+      display: none; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #2196F3; border-radius: 50%;
+      width: 60px; height: 60px; animation: spin 1s linear infinite; z-index: 101;
+    }
+    @keyframes spin { 0%{transform:translate(-50%, -50%) rotate(0);} 100%{transform:translate(-50%, -50%) rotate(360);} }
+
+    /* OVERLAY ESCURO */
+    #overlayCarregar {
+      position: fixed;
+      top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,.55);
+      display:none;
+      justify-content:center;
+      align-items:center;
+      z-index:100;
+    }
+
+    #overlayCarregar div {
+      background:#fff;
+      padding:25px;
+      border-radius:12px;
+      font-size:18px;
+      font-weight:bold;
+      color:#333;
+      text-align:center;
+      box-shadow:0 4px 20px rgba(0,0,0,.2);
+    }
+  </style>
+</head>
+<body>
+
+<!-- OVERLAY -->
+<div id="overlayCarregar">
+  <div>Carregando usuários...</div>
+</div>
+
+<div class="container">
+  <h2>Requisição de produtos</h2>
+
+  <label>Solicitante:</label>
+  <select id="solicitante">
+    <option value="">Selecione o solicitante</option>
+  </select>
+
+  <label>Setor:</label>
+  <select id="setor">
+    <option value="Cozinha">Cozinha</option>
+    <option value="Parrila">Parrila</option>
+    <option value="Confeitaria">Confeitaria</option>
+    <option value="Limpeza Noite">Limpeza</option>
+    <option value="M. Kids">M. Kids</option>
+    <option value="Bar">Bar</option>
+    <option value="Caixa">Caixa</option>
+    <option value="Garçons">Garçons</option>
+    <option value="Sushi">Sushi</option>
+    <option value="Buffet">Buffet</option>
+  </select>
+
+  <label>Produto:</label>
+  <input type="text" id="item" placeholder="Digite o produto">
+
+  <label>Quantidade:</label>
+  <input type="number" id="quantidade" min="1">
+
+  <label>Unidade de Medida:</label>
+  <div class="unidades">
+    <button type="button" onclick="selecionarUnidade(this, 'UN.')">UN.</button>
+    <button type="button" onclick="selecionarUnidade(this, 'PC.')">PC.</button>
+    <button type="button" onclick="selecionarUnidade(this, 'L.')">L.</button>
+    <button type="button" onclick="selecionarUnidade(this, 'KG.')">KG.</button>
+    <button type="button" onclick="selecionarUnidade(this, 'CX')">CX.</button>
+  </div>
+
+  <label>Observações:</label>
+  <textarea id="observacoes" placeholder="Observações gerais"></textarea>
+
+  <div id="spinner"></div>
+  <button id="btn-enviar" class="btn-blue" onclick="enviarItem()">ENVIAR ITEM</button>
+  <button class="btn-red" onclick="limparTabela()">LIMPAR HISTÓRICO</button>
+  <p id="msg"></p>
+
+  <h3>Itens enviados nesta sessão:</h3>
+  <table id="historico">
+    <tr><th>Produto</th><th>Unidade</th><th>Qtd</th><th>Setor</th><th>Hora</th><th>Status</th></tr>
+  </table>
+</div>
+
+<script>
+let solicitanteSenhas = {};
+let unidadeSelecionada = '';
+let enviados = JSON.parse(localStorage.getItem('enviados')) || [];
+let senhaAutenticada = '';
+let usuariosCarregados = false;
+
+const URL_SENHAS = "https://script.google.com/macros/s/AKfycbwFQP8Pt1WvWREy8VduXb5pGLHCzI1i3Fqzi0bG2pjSOSeX_Ic9IvM87_9lzlViyjGx6w/exec";
+
+// ===============================
+// MOSTRAR OVERLAY AO CLICAR NO SELECT
+// ===============================
+document.getElementById("solicitante").addEventListener("click", () => {
+  if (!usuariosCarregados) {
+    document.getElementById("overlayCarregar").style.display = "flex";
+    carregarUsuarios();
+  }
+});
+
+// ========================================
+function carregarUsuarios() {
+  fetch(URL_SENHAS)
+    .then(r => r.json())
+    .then(data => {
+      usuariosCarregados = true;
+      document.getElementById("overlayCarregar").style.display = "none";
+
+      solicitanteSenhas = {};
+      const select = document.getElementById("solicitante");
+
+      data.forEach(u => {
+        solicitanteSenhas[u.nome] = u.senha;
+
+        const op = document.createElement("option");
+        op.value = u.nome;
+        op.textContent = u.nome;
+        select.appendChild(op);
+      });
+    })
+    .catch(() => {
+      document.getElementById("overlayCarregar").style.display = "none";
+      alert("Erro ao carregar usuários da planilha.");
+    });
+}
+
+// ========================================
+function selecionarUnidade(btn, valor) {
+  unidadeSelecionada = valor;
+  document.querySelectorAll('.unidades button').forEach(b => b.classList.remove('ativo'));
+  btn.classList.add('ativo');
+}
+
+// ========================================
+document.getElementById('solicitante').addEventListener('change', () => {
+  const s = document.getElementById('solicitante').value;
+  if (s) {
+    const senha = prompt(`Digite a senha para ${s}:`);
+    if (senha === solicitanteSenhas[s]) {
+      senhaAutenticada = senha;
+      document.getElementById('msg').innerText = "✅ Autenticado!";
+    } else {
+      senhaAutenticada = '';
+      document.getElementById('msg').innerText = "❌ Senha incorreta!";
+      document.getElementById('solicitante').value = '';
+    }
+  }
+});
+
+// ========================================
+function enviarItem() {
+  const solicitante = document.getElementById('solicitante').value.trim();
+  const setor = document.getElementById('setor').value.trim();
+  const item = document.getElementById('item').value.trim();
+  const quantidade = document.getElementById('quantidade').value.trim();
+  const observacoes = document.getElementById('observacoes').value.trim();
+  const horaEnvio = new Date().toLocaleTimeString();
+
+  if (!solicitante || !setor || !item || !quantidade || !unidadeSelecionada || !senhaAutenticada) {
+    document.getElementById('msg').innerText = "⚠️ Preencha tudo!";
+    return;
+  }
+
+  document.getElementById('spinner').style.display = 'block';
+  document.getElementById('btn-enviar').disabled = true;
+
+  enviados.push({ item, unidade: unidadeSelecionada, quantidade, setor, hora: horaEnvio, status: "Processando" });
+  save();
+  atualizarTabela();
+
+  const data = new URLSearchParams();
+  data.append('Item', item);
+  data.append('Unidade', unidadeSelecionada);
+  data.append('Quantidade', quantidade);
+  data.append('Setor', setor);
+  data.append('Solicitante', solicitante);
+  data.append('Observacoes', observacoes);
+
+ fetch('https://script.google.com/macros/s/AKfycbxk5CVDcrdUj546keN0l7p5EKNvSATgQaOuW5D4PdxmN2CESNFrLABOWCMrattDYl1qjQ/exec', {
+    method: 'POST',
+    body: data
+  })
+  .then(() => {
+    enviados[enviados.length - 1].status = "Enviado";
+    save();
+    atualizarTabela();
+    alert("✅ Item enviado com sucesso!");
+    limparCampos();
+  })
+  .catch(() => {
+    document.getElementById('msg').innerText = "Erro ao enviar.";
+  })
+  .finally(() => {
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('btn-enviar').disabled = false;
+  });
+}
+
+function limparCampos() {
+  document.getElementById('item').value = '';
+  document.getElementById('quantidade').value = '';
+  document.getElementById('observacoes').value = '';
+  unidadeSelecionada = '';
+  document.querySelectorAll('.unidades button').forEach(b => b.classList.remove('ativo'));
+}
+
+function atualizarTabela() {
+  const tabela = document.getElementById('historico');
+  tabela.innerHTML = `<tr><th>Produto</th><th>Unidade</th><th>Qtd</th><th>Setor</th><th>Hora</th><th>Status</th></tr>`;
+  enviados.forEach(i => {
+    const row = tabela.insertRow();
+    row.insertCell(0).innerText = i.item;
+    row.insertCell(1).innerText = i.unidade;
+    row.insertCell(2).innerText = i.quantidade;
+    row.insertCell(3).innerText = i.setor;
+    row.insertCell(4).innerText = i.hora;
+    row.insertCell(5).innerText = i.status;
+  });
+}
+
+function save() {
+  localStorage.setItem('enviados', JSON.stringify(enviados));
+}
+
+carregarUsuarios();  
+atualizarTabela();
+</script>
+
+</body>
+</html>
