@@ -796,11 +796,11 @@ fotoURL=await uploadFoto(file)
 const dados={
 
 empresa:EMPRESA,
-data:f_data.value,
+data: f_data.value || null,
 cantor:f_cantor.value,
 estilo:f_estilo.value,
 hora:f_hora.value,
-valor:f_valor.value,
+valor: f_valor.value ? Number(f_valor.value) : null,
 foto:fotoURL
 
 }
