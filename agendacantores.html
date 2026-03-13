@@ -5,60 +5,49 @@
 <meta charset="UTF-8">
 <title>Agenda de Músicos</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Great+Vibes&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
 <style>
 
-/* ============================= */
-/* VARIÁVEIS */
-/* ============================= */
+/* =========================== */
+/* BASE */
+/* =========================== */
 
 :root{
 --gold:#ffd700;
 --bg:#0b0b15;
 --card:#171725;
 --border:rgba(255,255,255,.08);
---text:#ffffff;
+--text:#fff;
 --muted:#9ca3af;
 --radius:14px;
 }
 
-/* ============================= */
-
 *{box-sizing:border-box;margin:0;padding:0}
 
 body{
-
 font-family:'Poppins',sans-serif;
 background:linear-gradient(180deg,#050507,#0c0c18);
 color:var(--text);
-
 height:100vh;
 display:flex;
 flex-direction:column;
 overflow:hidden;
-
 }
 
-/* ============================= */
+/* =========================== */
 /* HEADER */
-/* ============================= */
+/* =========================== */
 
 header{
-
 display:flex;
 justify-content:space-between;
 align-items:center;
-
 padding:14px 16px;
-
 background:rgba(10,10,20,.9);
 border-bottom:1px solid var(--border);
-
 }
 
 .title{
@@ -72,70 +61,42 @@ font-family:'Great Vibes';
 font-size:18px;
 }
 
-.head-right{
-display:flex;
-gap:8px;
-align-items:center;
-}
-
-.btn{
-background:var(--gold);
-border:none;
-padding:8px 12px;
-border-radius:10px;
-font-weight:600;
-cursor:pointer;
-}
-
-/* ============================= */
+/* =========================== */
 /* CONTEUDO */
-/* ============================= */
+/* =========================== */
 
 .content{
-
 flex:1;
 overflow-y:auto;
-
 padding:16px;
-
 display:flex;
 justify-content:center;
-
 }
 
 .lista{
-
 width:100%;
 max-width:850px;
-
 display:flex;
 flex-direction:column;
 gap:18px;
-
 }
 
-/* ============================= */
+/* =========================== */
 /* GRUPO DIA */
-/* ============================= */
+/* =========================== */
 
 .grupo{
-
 display:grid;
 grid-template-columns:60px 1fr;
 gap:14px;
-
 }
 
 .dia{
-
 font-family:'Bebas Neue';
 font-size:28px;
-
 display:flex;
 flex-direction:column;
 align-items:center;
-justify-content:center;
-
 }
 
 .dia small{
@@ -143,9 +104,9 @@ font-size:11px;
 color:var(--gold);
 }
 
-/* ============================= */
+/* =========================== */
 /* EVENTOS */
-/* ============================= */
+/* =========================== */
 
 .itens{
 display:flex;
@@ -156,19 +117,14 @@ padding-left:12px;
 }
 
 .linha{
-
 display:flex;
 align-items:center;
 justify-content:space-between;
-
 background:var(--card);
 border:1px solid var(--border);
-
 padding:10px;
 border-radius:12px;
-
 cursor:pointer;
-
 }
 
 .evento{
@@ -178,15 +134,11 @@ gap:10px;
 }
 
 .foto{
-
 width:44px;
 height:44px;
-
 border-radius:50%;
 object-fit:cover;
-
 border:2px solid var(--gold);
-
 }
 
 .texto{
@@ -203,63 +155,43 @@ font-size:13px;
 color:var(--muted);
 }
 
-/* ============================= */
-/* BOTÃO + */
-/* ============================= */
+/* =========================== */
+/* BOTAO + */
+/* =========================== */
 
 #addBtn{
-
 position:fixed;
 bottom:20px;
 right:20px;
-
 width:56px;
 height:56px;
-
 border-radius:50%;
 border:none;
-
 background:var(--gold);
-
 font-size:30px;
-font-weight:900;
-
 cursor:pointer;
-
 }
 
-/* ============================= */
-/* MODAL */
-/* ============================= */
+/* =========================== */
+/* MODAIS */
+/* =========================== */
 
 .modal{
-
 position:fixed;
 inset:0;
-
 display:none;
-
 align-items:center;
 justify-content:center;
-
 background:rgba(0,0,0,.7);
-
 }
 
 .modal-box{
-
 background:#111324;
-
 padding:20px;
-
 border-radius:14px;
-
-width:min(90vw,420px);
-
-}
-
-.modal-box h3{
-margin-bottom:10px;
+width:min(92vw,420px);
+max-height:90vh;
+overflow:auto;
 }
 
 .modal-box label{
@@ -268,15 +200,11 @@ margin-top:8px;
 }
 
 .modal-box input{
-
 width:100%;
 padding:8px;
-
 margin-top:4px;
-
 border-radius:6px;
 border:1px solid #ccc;
-
 }
 
 .modal-box button{
@@ -284,28 +212,18 @@ margin-top:10px;
 width:100%;
 }
 
-/* ============================= */
-/* LOGIN */
-/* ============================= */
+/* =========================== */
 
 #loginBox{
-
 background:white;
 color:black;
-
 padding:20px;
-
 border-radius:14px;
-
 display:flex;
 flex-direction:column;
 gap:10px;
-
 width:300px;
-
 }
-
-/* ============================= */
 
 </style>
 
@@ -316,24 +234,14 @@ width:300px;
 <header>
 
 <div>
-
 <div class="title">Agenda</div>
 <div class="subtitle" id="empresaNome"></div>
-
-</div>
-
-<div class="head-right">
-
-<button id="calendarBtn" class="btn">📅</button>
-
 </div>
 
 </header>
 
 <div class="content">
-
 <div class="lista" id="lista"></div>
-
 </div>
 
 <button id="addBtn">+</button>
@@ -346,9 +254,9 @@ width:300px;
 
 <h3>Login</h3>
 
-<input type="password" id="senha" placeholder="Senha">
+<input type="password" id="senha">
 
-<button onclick="login()" class="btn">Entrar</button>
+<button onclick="login()">Entrar</button>
 
 <div id="loginMsg"></div>
 
@@ -362,7 +270,7 @@ width:300px;
 
 <div class="modal-box">
 
-<h3 id="formTitle">Novo</h3>
+<h3 id="formTitle">Registro</h3>
 
 <label>Data</label>
 <input type="date" id="f_data">
@@ -370,7 +278,7 @@ width:300px;
 <label>Cantor</label>
 <input type="text" id="f_cantor">
 
-<label>Estilo</label>
+<label>Estilo Musical</label>
 <input type="text" id="f_estilo">
 
 <label>Horário</label>
@@ -382,9 +290,9 @@ width:300px;
 <label>Foto</label>
 <input type="file" id="f_foto">
 
-<button onclick="salvarRegistro()" class="btn">Salvar</button>
+<button onclick="salvarRegistro()">Salvar</button>
 
-<button onclick="deleteRegistro()" id="deleteBtn" style="display:none;background:red;color:white">Excluir</button>
+<button onclick="deleteRegistro()" id="deleteBtn" style="background:red;color:white">Excluir</button>
 
 <button onclick="fecharForm()">Cancelar</button>
 
@@ -396,14 +304,18 @@ width:300px;
 
 <script>
 
+/* ========================= */
 /* SUPABASE */
+/* ========================= */
 
 const sb = supabase.createClient(
 "https://dxkszikemntfusfyrzos.supabase.co",
 "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
-);
+)
 
+/* ========================= */
 /* EMPRESAS */
+/* ========================= */
 
 const SENHAS={
 "0152":"Mercatto Delícia",
@@ -414,7 +326,9 @@ const SENHAS={
 let EMPRESA=null
 let EDITANDO=null
 
+/* ========================= */
 /* LOGIN */
+/* ========================= */
 
 function verificarLogin(){
 
@@ -423,13 +337,14 @@ const e=localStorage.getItem("empresa")
 if(e){
 
 EMPRESA=e
-document.getElementById("empresaNome").textContent=e
-document.getElementById("loginModal").style.display="none"
+empresaNome.textContent=e
+loginModal.style.display="none"
+
 carregarAgenda()
 
 }else{
 
-document.getElementById("loginModal").style.display="flex"
+loginModal.style.display="flex"
 
 }
 
@@ -437,35 +352,35 @@ document.getElementById("loginModal").style.display="flex"
 
 function login(){
 
-const senha=document.getElementById("senha").value
+const s=senha.value
 
-if(SENHAS[senha]){
+if(SENHAS[s]){
 
-EMPRESA=SENHAS[senha]
+EMPRESA=SENHAS[s]
 
 localStorage.setItem("empresa",EMPRESA)
 
-document.getElementById("empresaNome").textContent=EMPRESA
+empresaNome.textContent=EMPRESA
 
-document.getElementById("loginModal").style.display="none"
+loginModal.style.display="none"
 
 carregarAgenda()
 
 }else{
 
-document.getElementById("loginMsg").textContent="Senha incorreta"
+loginMsg.textContent="Senha incorreta"
 
 }
 
 }
 
+/* ========================= */
 /* CARREGAR */
+/* ========================= */
 
 async function carregarAgenda(){
 
-const box=document.getElementById("lista")
-
-box.innerHTML=""
+lista.innerHTML=""
 
 let {data}=await sb
 .from("agenda_musicos")
@@ -487,16 +402,16 @@ Object.keys(grupos).forEach(d=>{
 
 const itens=grupos[d].map(ev=>`
 
-<div class="linha">
+<div class="linha" onclick="editar('${ev.id}')">
 
 <div class="evento">
 
-<img class="foto" src="${ev.foto||'https://i.imgur.com/0y0y0y0.png'}">
+<img class="foto" src="${ev.foto||''}">
 
 <div>
 
 <div class="texto">${ev.cantor}</div>
-<div class="estilo">${ev.estilo||""}</div>
+<div class="estilo">${ev.estilo||''}</div>
 
 </div>
 
@@ -508,7 +423,7 @@ const itens=grupos[d].map(ev=>`
 
 `).join("")
 
-box.innerHTML+=`
+lista.innerHTML+=`
 
 <div class="grupo">
 
@@ -529,7 +444,33 @@ ${new Date(d).getDate()}
 
 }
 
+/* ========================= */
+/* EDITAR */
+/* ========================= */
+
+async function editar(id){
+
+const {data}=await sb
+.from("agenda_musicos")
+.select("*")
+.eq("id",id)
+.single()
+
+EDITANDO=data
+
+formModal.style.display="flex"
+
+f_data.value=data.data
+f_cantor.value=data.cantor
+f_estilo.value=data.estilo
+f_hora.value=data.hora
+f_valor.value=data.valor
+
+}
+
+/* ========================= */
 /* UPLOAD FOTO */
+/* ========================= */
 
 async function uploadFoto(file){
 
@@ -547,39 +488,46 @@ return data.publicUrl
 
 }
 
+/* ========================= */
 /* SALVAR */
+/* ========================= */
 
 async function salvarRegistro(){
 
-let fotoURL=null
+let fotoURL=EDITANDO?.foto||null
 
-const file=document.getElementById("f_foto").files[0]
+const file=f_foto.files[0]
 
 if(file){
-
 fotoURL=await uploadFoto(file)
+}
+
+const dados={
+
+empresa:EMPRESA,
+data:f_data.value,
+cantor:f_cantor.value,
+estilo:f_estilo.value,
+hora:f_hora.value,
+valor:f_valor.value,
+foto:fotoURL
 
 }
 
+if(EDITANDO){
+
 await sb
 .from("agenda_musicos")
-.insert([{
+.update(dados)
+.eq("id",EDITANDO.id)
 
-empresa:EMPRESA,
+}else{
 
-data:document.getElementById("f_data").value,
+await sb
+.from("agenda_musicos")
+.insert([dados])
 
-cantor:document.getElementById("f_cantor").value,
-
-estilo:document.getElementById("f_estilo").value,
-
-hora:document.getElementById("f_hora").value,
-
-valor:document.getElementById("f_valor").value,
-
-foto:fotoURL
-
-}])
+}
 
 fecharForm()
 
@@ -587,21 +535,50 @@ carregarAgenda()
 
 }
 
-/* FORM */
+/* ========================= */
+/* DELETE */
+/* ========================= */
 
-document.getElementById("addBtn").onclick=()=>{
+async function deleteRegistro(){
 
-document.getElementById("formModal").style.display="flex"
+if(!EDITANDO)return
+
+if(!confirm("Excluir registro?"))return
+
+await sb
+.from("agenda_musicos")
+.delete()
+.eq("id",EDITANDO.id)
+
+fecharForm()
+
+carregarAgenda()
 
 }
 
-/* FECHAR */
+/* ========================= */
+/* FORM */
+/* ========================= */
+
+addBtn.onclick=()=>{
+
+EDITANDO=null
+
+formModal.style.display="flex"
+
+f_data.value=""
+f_cantor.value=""
+f_estilo.value=""
+f_hora.value=""
+f_valor.value=""
+
+}
 
 function fecharForm(){
-
-document.getElementById("formModal").style.display="none"
-
+formModal.style.display="none"
 }
+
+/* ========================= */
 
 verificarLogin()
 
