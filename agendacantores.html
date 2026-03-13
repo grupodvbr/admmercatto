@@ -654,10 +654,9 @@ function definirPeriodoPadrao(){
 
 const hoje=new Date()
 
-dataInicio=new Date()
-dataFim=new Date()
+dataInicio = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())
 
-dataFim.setDate(hoje.getDate()+7)
+dataFim = null // sem limite
 
 }
 
@@ -671,6 +670,7 @@ let {data}=await sb
 .from("agenda_musicos")
 .select("*")
 .eq("empresa",EMPRESA)
+.gte("data", dataInicio.toISOString().split("T")[0])
 .order("data")
 
 const grupos={}
@@ -679,8 +679,10 @@ data.forEach(ev=>{
 
 const d = new Date(ev.data + "T00:00")
   
-if(d>=dataInicio && d<=dataFim){
-
+if(
+   d >= dataInicio &&
+   (dataFim === null || d <= dataFim)
+){
 if(!grupos[ev.data])grupos[ev.data]=[]
 
 grupos[ev.data].push(ev)
