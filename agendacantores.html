@@ -4,11 +4,12 @@
 <head>
 
 <meta charset="UTF-8">
+
 <title>Agenda de Músicos</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Great+Vibes&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
@@ -21,7 +22,7 @@
 --bg:#0b0b15;
 --card:#171725;
 --border:rgba(255,255,255,.08);
---text:#ffffff;
+--text:#fff;
 --muted:#9ca3af;
 --radius:14px;
 }
@@ -74,62 +75,38 @@ font-family:'Great Vibes';
 font-size:18px;
 }
 
-.btn{
-background:var(--gold);
-border:none;
-padding:8px 12px;
-border-radius:10px;
-font-weight:600;
-cursor:pointer;
-}
-
 /* ================= CONTENT ================= */
 
 .content{
-
 flex:1;
-
 overflow-y:auto;
-
 padding:16px;
-
 display:flex;
 justify-content:center;
-
 }
 
 .lista{
-
 width:100%;
 max-width:900px;
-
 display:flex;
 flex-direction:column;
-
-gap:20px;
-
+gap:18px;
 }
 
 /* ================= GRUPO DIA ================= */
 
 .grupo{
-
 display:grid;
 grid-template-columns:60px 1fr;
-
 gap:14px;
-
 }
 
 .dia{
-
 font-family:'Bebas Neue';
 font-size:28px;
-
 display:flex;
 flex-direction:column;
 align-items:center;
-
 }
 
 .dia small{
@@ -140,54 +117,36 @@ color:var(--gold);
 /* ================= EVENTOS ================= */
 
 .itens{
-
 display:flex;
 flex-direction:column;
 gap:10px;
-
 border-left:2px solid var(--gold);
-
 padding-left:12px;
-
 }
 
 .linha{
-
 display:flex;
 align-items:center;
 justify-content:space-between;
-
 background:var(--card);
-
 border:1px solid var(--border);
-
 padding:10px;
-
 border-radius:12px;
-
 cursor:pointer;
-
 }
 
 .evento{
-
 display:flex;
 align-items:center;
 gap:10px;
-
 }
 
 .foto{
-
 width:44px;
 height:44px;
-
 border-radius:50%;
-
 object-fit:cover;
-
 border:2px solid var(--gold);
-
 }
 
 .texto{
@@ -209,6 +168,7 @@ color:var(--muted);
 #addBtn{
 
 position:fixed;
+
 bottom:20px;
 right:20px;
 
@@ -241,6 +201,8 @@ justify-content:center;
 
 background:rgba(0,0,0,.7);
 
+padding:16px;
+
 }
 
 .modal-box{
@@ -251,12 +213,17 @@ padding:20px;
 
 border-radius:14px;
 
-width:min(92vw,420px);
+width:100%;
+max-width:420px;
 
 max-height:90vh;
 
-overflow:auto;
+overflow-y:auto;
 
+}
+
+.modal-box h3{
+margin-bottom:12px;
 }
 
 .modal-box label{
@@ -265,17 +232,38 @@ margin-top:10px;
 }
 
 .modal-box input{
+
 width:100%;
-padding:8px;
+
+padding:12px;
+
 margin-top:4px;
-border-radius:6px;
+
+border-radius:8px;
+
 border:1px solid #ccc;
+
+font-size:16px;
+
 }
 
 .modal-box button{
-margin-top:10px;
+
+margin-top:12px;
+
 width:100%;
+
+padding:12px;
+
+border:none;
+
+border-radius:10px;
+
+font-weight:600;
+
 }
+
+/* ================= LOGIN ================= */
 
 #loginBox{
 
@@ -290,7 +278,8 @@ display:flex;
 flex-direction:column;
 gap:10px;
 
-width:300px;
+width:100%;
+max-width:320px;
 
 }
 
@@ -309,7 +298,7 @@ width:300px;
 
 </div>
 
-<button id="calendarBtn" class="btn">📅</button>
+<button id="calendarBtn">📅</button>
 
 </header>
 
@@ -327,7 +316,7 @@ width:300px;
 
 <h3>Login</h3>
 
-<input type="password" id="senha">
+<input type="password" id="senha" placeholder="Senha">
 
 <button onclick="login()">Entrar</button>
 
@@ -358,12 +347,12 @@ width:300px;
 <input type="time" id="f_hora">
 
 <label>Valor</label>
-<input type="text" id="f_valor">
+<input type="number" id="f_valor">
 
 <label>Foto</label>
 <input type="file" id="f_foto">
 
-<button onclick="salvarRegistro()">Salvar</button>
+<button onclick="salvarRegistro()" style="background:gold">Salvar</button>
 
 <button onclick="deleteRegistro()" id="deleteBtn" style="background:red;color:white">Excluir</button>
 
@@ -373,19 +362,19 @@ width:300px;
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
 
-/* ================= SUPABASE ================= */
+/* SUPABASE */
 
 const sb = supabase.createClient(
 "https://dxkszikemntfusfyrzos.supabase.co",
 "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
 )
 
-/* ================= EMPRESAS ================= */
+/* EMPRESAS */
 
 const SENHAS={
 "0152":"Mercatto Delícia",
@@ -399,7 +388,7 @@ let EDITANDO=null
 let dataInicio=null
 let dataFim=null
 
-/* ================= CALENDARIO ================= */
+/* CALENDARIO */
 
 flatpickr("#calendarBtn",{
 
@@ -407,7 +396,7 @@ mode:"range",
 
 dateFormat:"Y-m-d",
 
-onClose:function(dates){
+onClose:(dates)=>{
 
 if(dates.length===2){
 
@@ -422,7 +411,7 @@ carregarAgenda()
 
 })
 
-/* ================= LOGIN ================= */
+/* LOGIN */
 
 function verificarLogin(){
 
@@ -431,13 +420,10 @@ const e=localStorage.getItem("empresa")
 if(e){
 
 EMPRESA=e
-
 empresaNome.textContent=e
-
 loginModal.style.display="none"
 
 definirPeriodoPadrao()
-
 carregarAgenda()
 
 }else{
@@ -463,7 +449,6 @@ empresaNome.textContent=EMPRESA
 loginModal.style.display="none"
 
 definirPeriodoPadrao()
-
 carregarAgenda()
 
 }else{
@@ -474,21 +459,20 @@ loginMsg.textContent="Senha incorreta"
 
 }
 
-/* ================= PERIODO PADRAO ================= */
+/* PERIODO PADRAO */
 
 function definirPeriodoPadrao(){
 
 const hoje=new Date()
 
 dataInicio=new Date()
-
 dataFim=new Date()
 
 dataFim.setDate(hoje.getDate()+7)
 
 }
 
-/* ================= CARREGAR ================= */
+/* CARREGAR */
 
 async function carregarAgenda(){
 
@@ -562,7 +546,7 @@ ${new Date(d).getDate()}
 
 }
 
-/* ================= EDITAR ================= */
+/* EDITAR */
 
 async function editar(id){
 
@@ -584,7 +568,7 @@ f_valor.value=data.valor
 
 }
 
-/* ================= UPLOAD FOTO ================= */
+/* UPLOAD FOTO */
 
 async function uploadFoto(file){
 
@@ -602,7 +586,7 @@ return data.publicUrl
 
 }
 
-/* ================= SALVAR ================= */
+/* SALVAR */
 
 async function salvarRegistro(){
 
@@ -611,7 +595,9 @@ let fotoURL=EDITANDO?.foto||null
 const file=f_foto.files[0]
 
 if(file){
+
 fotoURL=await uploadFoto(file)
+
 }
 
 const dados={
@@ -642,12 +628,11 @@ await sb
 }
 
 fecharForm()
-
 carregarAgenda()
 
 }
 
-/* ================= DELETE ================= */
+/* DELETE */
 
 async function deleteRegistro(){
 
@@ -661,12 +646,11 @@ await sb
 .eq("id",EDITANDO.id)
 
 fecharForm()
-
 carregarAgenda()
 
 }
 
-/* ================= FORM ================= */
+/* FORM */
 
 addBtn.onclick=()=>{
 
@@ -686,7 +670,7 @@ function fecharForm(){
 formModal.style.display="none"
 }
 
-/* ================= INIT ================= */
+/* INIT */
 
 verificarLogin()
 
