@@ -196,22 +196,29 @@ inset:0;
 
 display:none;
 
-align-items:center;
+align-items:flex-end;
 justify-content:center;
 
 background:rgba(0,0,0,.7);
 
-padding:16px;
+padding:0;
 
+animation:fade .25s;
+
+}
+
+@keyframes fade{
+from{opacity:0}
+to{opacity:1}
 }
 
 .modal-box{
 
-background:#111324;
+background:linear-gradient(180deg,#111324,#0c0d1c);
 
-padding:20px;
+padding:22px;
 
-border-radius:14px;
+border-radius:22px 22px 0 0;
 
 width:100%;
 max-width:420px;
@@ -220,30 +227,77 @@ max-height:90vh;
 
 overflow-y:auto;
 
+box-shadow:0 -20px 60px rgba(0,0,0,.6);
+
+border-top:1px solid rgba(255,255,255,.06);
+
+animation:modalUp .25s ease;
+
+}
+
+@keyframes modalUp{
+from{transform:translateY(40px);opacity:.6}
+to{transform:translateY(0);opacity:1}
 }
 
 .modal-box h3{
-margin-bottom:12px;
-}
 
+margin-bottom:14px;
+
+font-size:18px;
+
+font-weight:600;
+
+letter-spacing:.5px;
+
+color:var(--gold);
+
+}
 .modal-box label{
+
 display:block;
-margin-top:10px;
+
+margin-top:14px;
+
+font-size:11px;
+
+letter-spacing:.5px;
+
+color:#9ca3af;
+
+text-transform:uppercase;
+
 }
 
 .modal-box input{
 
 width:100%;
 
-padding:12px;
+padding:14px;
 
-margin-top:4px;
+margin-top:6px;
 
-border-radius:8px;
+border-radius:10px;
 
-border:1px solid #ccc;
+border:1px solid rgba(255,255,255,.12);
 
 font-size:16px;
+
+background:#1b1c2e;
+
+color:#fff;
+
+outline:none;
+
+transition:.2s;
+
+}
+
+.modal-box input:focus{
+
+border-color:var(--gold);
+
+box-shadow:0 0 0 2px rgba(255,215,0,.2);
 
 }
 
@@ -282,7 +336,45 @@ width:100%;
 max-width:320px;
 
 }
+.form-grid{
 
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:10px;
+
+}
+
+.actions{
+display:flex;
+gap:10px;
+margin-top:18px;
+}
+
+.actions button{
+flex:1;
+padding:14px;
+border:none;
+border-radius:12px;
+font-weight:600;
+cursor:pointer;
+}
+
+.btn-save{
+background:var(--gold);
+color:#000;
+}
+
+.btn-delete{
+background:#e11d48;
+color:#fff;
+}
+
+.btn-cancel{
+background:#2b2d3f;
+color:#fff;
+}
 </style>
 
 </head>
@@ -334,8 +426,19 @@ max-width:320px;
 
 <h3 id="formTitle">Registro</h3>
 
+<div class="form-grid">
+
+<div>
 <label>Data</label>
 <input type="date" id="f_data">
+</div>
+
+<div>
+<label>Hora</label>
+<input type="time" id="f_hora">
+</div>
+
+</div>
 
 <label>Cantor</label>
 <input type="text" id="f_cantor">
@@ -343,8 +446,6 @@ max-width:320px;
 <label>Estilo</label>
 <input type="text" id="f_estilo">
 
-<label>Horário</label>
-<input type="time" id="f_hora">
 
 <label>Valor</label>
 <input type="number" id="f_valor">
@@ -352,11 +453,24 @@ max-width:320px;
 <label>Foto</label>
 <input type="file" id="f_foto">
 
-<button onclick="salvarRegistro()" style="background:gold">Salvar</button>
+<img id="previewFoto" style="
+width:70px;
+height:70px;
+border-radius:50%;
+margin-top:8px;
+object-fit:cover;
+border:2px solid var(--gold);
+display:none;
+">
+<div class="actions">
 
-<button onclick="deleteRegistro()" id="deleteBtn" style="background:red;color:white">Excluir</button>
+<button class="btn-save" onclick="salvarRegistro()">Salvar</button>
 
-<button onclick="fecharForm()">Cancelar</button>
+<button class="btn-delete" onclick="deleteRegistro()" id="deleteBtn">Excluir</button>
+
+<button class="btn-cancel" onclick="fecharForm()">Cancelar</button>
+
+</div>
 
 </div>
 
@@ -673,7 +787,19 @@ formModal.style.display="none"
 /* INIT */
 
 verificarLogin()
+f_foto.addEventListener("change", e => {
 
+const file = e.target.files[0]
+
+if(!file) return
+
+const img = document.getElementById("previewFoto")
+
+img.src = URL.createObjectURL(file)
+
+img.style.display="block"
+
+})
 </script>
 
 </body>
