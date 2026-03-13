@@ -79,7 +79,7 @@ font-size:18px;
 
 .content{
 flex:1;
-overflow-y:auto;
+overflow:hidden;
 padding:16px;
 display:flex;
 justify-content:center;
@@ -91,8 +91,11 @@ max-width:900px;
 display:flex;
 flex-direction:column;
 gap:18px;
-}
 
+overflow-y:auto;
+height:100%;
+padding-right:6px;
+}
 /* ================= GRUPO DIA ================= */
 
 .grupo{
@@ -374,6 +377,19 @@ color:#fff;
 .btn-cancel{
 background:#2b2d3f;
 color:#fff;
+}
+
+.lista::-webkit-scrollbar{
+width:6px;
+}
+
+.lista::-webkit-scrollbar-track{
+background:transparent;
+}
+
+.lista::-webkit-scrollbar-thumb{
+background:rgba(255,215,0,.5);
+border-radius:10px;
 }
 </style>
 
