@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
 
 <meta charset="UTF-8">
@@ -9,45 +10,57 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Great+Vibes&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 <style>
 
-/* =========================== */
-/* BASE */
-/* =========================== */
+/* ================= BASE ================= */
 
 :root{
 --gold:#ffd700;
 --bg:#0b0b15;
 --card:#171725;
 --border:rgba(255,255,255,.08);
---text:#fff;
+--text:#ffffff;
 --muted:#9ca3af;
 --radius:14px;
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
 
 body{
+
 font-family:'Poppins',sans-serif;
 background:linear-gradient(180deg,#050507,#0c0c18);
 color:var(--text);
+
 height:100vh;
+
 display:flex;
 flex-direction:column;
+
 overflow:hidden;
+
 }
 
-/* =========================== */
-/* HEADER */
-/* =========================== */
+/* ================= HEADER ================= */
 
 header{
+
 display:flex;
 justify-content:space-between;
 align-items:center;
+
 padding:14px 16px;
+
 background:rgba(10,10,20,.9);
+
 border-bottom:1px solid var(--border);
+
 }
 
 .title{
@@ -61,42 +74,62 @@ font-family:'Great Vibes';
 font-size:18px;
 }
 
-/* =========================== */
-/* CONTEUDO */
-/* =========================== */
+.btn{
+background:var(--gold);
+border:none;
+padding:8px 12px;
+border-radius:10px;
+font-weight:600;
+cursor:pointer;
+}
+
+/* ================= CONTENT ================= */
 
 .content{
+
 flex:1;
+
 overflow-y:auto;
+
 padding:16px;
+
 display:flex;
 justify-content:center;
+
 }
 
 .lista{
+
 width:100%;
-max-width:850px;
+max-width:900px;
+
 display:flex;
 flex-direction:column;
-gap:18px;
+
+gap:20px;
+
 }
 
-/* =========================== */
-/* GRUPO DIA */
-/* =========================== */
+/* ================= GRUPO DIA ================= */
 
 .grupo{
+
 display:grid;
 grid-template-columns:60px 1fr;
+
 gap:14px;
+
 }
 
 .dia{
+
 font-family:'Bebas Neue';
 font-size:28px;
+
 display:flex;
 flex-direction:column;
 align-items:center;
+
 }
 
 .dia small{
@@ -104,41 +137,57 @@ font-size:11px;
 color:var(--gold);
 }
 
-/* =========================== */
-/* EVENTOS */
-/* =========================== */
+/* ================= EVENTOS ================= */
 
 .itens{
+
 display:flex;
 flex-direction:column;
 gap:10px;
+
 border-left:2px solid var(--gold);
+
 padding-left:12px;
+
 }
 
 .linha{
+
 display:flex;
 align-items:center;
 justify-content:space-between;
+
 background:var(--card);
+
 border:1px solid var(--border);
+
 padding:10px;
+
 border-radius:12px;
+
 cursor:pointer;
+
 }
 
 .evento{
+
 display:flex;
 align-items:center;
 gap:10px;
+
 }
 
 .foto{
+
 width:44px;
 height:44px;
+
 border-radius:50%;
+
 object-fit:cover;
+
 border:2px solid var(--gold);
+
 }
 
 .texto{
@@ -155,48 +204,64 @@ font-size:13px;
 color:var(--muted);
 }
 
-/* =========================== */
-/* BOTAO + */
-/* =========================== */
+/* ================= BOTÃO + ================= */
 
 #addBtn{
+
 position:fixed;
 bottom:20px;
 right:20px;
+
 width:56px;
 height:56px;
+
 border-radius:50%;
+
 border:none;
+
 background:var(--gold);
+
 font-size:30px;
+
 cursor:pointer;
+
 }
 
-/* =========================== */
-/* MODAIS */
-/* =========================== */
+/* ================= MODAL ================= */
 
 .modal{
+
 position:fixed;
 inset:0;
+
 display:none;
+
 align-items:center;
 justify-content:center;
+
 background:rgba(0,0,0,.7);
+
 }
 
 .modal-box{
+
 background:#111324;
+
 padding:20px;
+
 border-radius:14px;
+
 width:min(92vw,420px);
+
 max-height:90vh;
+
 overflow:auto;
+
 }
 
 .modal-box label{
 display:block;
-margin-top:8px;
+margin-top:10px;
 }
 
 .modal-box input{
@@ -212,17 +277,21 @@ margin-top:10px;
 width:100%;
 }
 
-/* =========================== */
-
 #loginBox{
+
 background:white;
 color:black;
+
 padding:20px;
+
 border-radius:14px;
+
 display:flex;
 flex-direction:column;
 gap:10px;
+
 width:300px;
+
 }
 
 </style>
@@ -234,9 +303,13 @@ width:300px;
 <header>
 
 <div>
+
 <div class="title">Agenda</div>
 <div class="subtitle" id="empresaNome"></div>
+
 </div>
+
+<button id="calendarBtn" class="btn">📅</button>
 
 </header>
 
@@ -278,7 +351,7 @@ width:300px;
 <label>Cantor</label>
 <input type="text" id="f_cantor">
 
-<label>Estilo Musical</label>
+<label>Estilo</label>
 <input type="text" id="f_estilo">
 
 <label>Horário</label>
@@ -300,22 +373,19 @@ width:300px;
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 
-/* ========================= */
-/* SUPABASE */
-/* ========================= */
+/* ================= SUPABASE ================= */
 
 const sb = supabase.createClient(
 "https://dxkszikemntfusfyrzos.supabase.co",
 "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
 )
 
-/* ========================= */
-/* EMPRESAS */
-/* ========================= */
+/* ================= EMPRESAS ================= */
 
 const SENHAS={
 "0152":"Mercatto Delícia",
@@ -326,9 +396,33 @@ const SENHAS={
 let EMPRESA=null
 let EDITANDO=null
 
-/* ========================= */
-/* LOGIN */
-/* ========================= */
+let dataInicio=null
+let dataFim=null
+
+/* ================= CALENDARIO ================= */
+
+flatpickr("#calendarBtn",{
+
+mode:"range",
+
+dateFormat:"Y-m-d",
+
+onClose:function(dates){
+
+if(dates.length===2){
+
+dataInicio=dates[0]
+dataFim=dates[1]
+
+carregarAgenda()
+
+}
+
+}
+
+})
+
+/* ================= LOGIN ================= */
 
 function verificarLogin(){
 
@@ -337,8 +431,12 @@ const e=localStorage.getItem("empresa")
 if(e){
 
 EMPRESA=e
+
 empresaNome.textContent=e
+
 loginModal.style.display="none"
+
+definirPeriodoPadrao()
 
 carregarAgenda()
 
@@ -364,6 +462,8 @@ empresaNome.textContent=EMPRESA
 
 loginModal.style.display="none"
 
+definirPeriodoPadrao()
+
 carregarAgenda()
 
 }else{
@@ -374,9 +474,21 @@ loginMsg.textContent="Senha incorreta"
 
 }
 
-/* ========================= */
-/* CARREGAR */
-/* ========================= */
+/* ================= PERIODO PADRAO ================= */
+
+function definirPeriodoPadrao(){
+
+const hoje=new Date()
+
+dataInicio=new Date()
+
+dataFim=new Date()
+
+dataFim.setDate(hoje.getDate()+7)
+
+}
+
+/* ================= CARREGAR ================= */
 
 async function carregarAgenda(){
 
@@ -392,9 +504,15 @@ const grupos={}
 
 data.forEach(ev=>{
 
+const d=new Date(ev.data)
+
+if(d>=dataInicio && d<=dataFim){
+
 if(!grupos[ev.data])grupos[ev.data]=[]
 
 grupos[ev.data].push(ev)
+
+}
 
 })
 
@@ -444,9 +562,7 @@ ${new Date(d).getDate()}
 
 }
 
-/* ========================= */
-/* EDITAR */
-/* ========================= */
+/* ================= EDITAR ================= */
 
 async function editar(id){
 
@@ -468,9 +584,7 @@ f_valor.value=data.valor
 
 }
 
-/* ========================= */
-/* UPLOAD FOTO */
-/* ========================= */
+/* ================= UPLOAD FOTO ================= */
 
 async function uploadFoto(file){
 
@@ -488,9 +602,7 @@ return data.publicUrl
 
 }
 
-/* ========================= */
-/* SALVAR */
-/* ========================= */
+/* ================= SALVAR ================= */
 
 async function salvarRegistro(){
 
@@ -535,9 +647,7 @@ carregarAgenda()
 
 }
 
-/* ========================= */
-/* DELETE */
-/* ========================= */
+/* ================= DELETE ================= */
 
 async function deleteRegistro(){
 
@@ -556,9 +666,7 @@ carregarAgenda()
 
 }
 
-/* ========================= */
-/* FORM */
-/* ========================= */
+/* ================= FORM ================= */
 
 addBtn.onclick=()=>{
 
@@ -578,7 +686,7 @@ function fecharForm(){
 formModal.style.display="none"
 }
 
-/* ========================= */
+/* ================= INIT ================= */
 
 verificarLogin()
 
