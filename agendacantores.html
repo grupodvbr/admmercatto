@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Agenda de Músicos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Great+Vibes&family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <style>
+    :root{
+      --amarelo:#ffd700; --overlay:rgba(10,0,30,.78);
+      --texto:#fff; --muted:#d8d8d8; --card:rgba(255,255,255,.06);
+      --line:rgba(255,255,255,.18); --verde-claro:rgba(0,255,128,0.15);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Poppins',sans-serif;background:#0b0b15;color:var(--texto);}
+    /* Estrelas */
+    #stars,#stars-front{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden;pointer-events:none;z-index:0;}
+    .star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;opacity:.9;
+      box-shadow:0 0 6px #fff,0 0 12px #ffd700;animation:fall linear infinite;}
+    @keyframes fall{0%{transform:translateY(-10vh);}100%{transform:translateY(110vh);}}
+    /* Cabeçalho */
+    header.titulo{position:sticky;top:0;left:0;right:0;background:var(--overlay);
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+      padding:20px 18px;z-index:100;}
+    .title{margin:0;font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--amarelo);line-height:1;}
+    .subtitle{margin:2px 0 0;font-family:'Great Vibes',cursive;font-size:18px;color:#fff;opacity:.95}
+    .brand{display:flex;flex-direction:column}
+    .btn{border:1px solid var(--line);border-radius:12px;cursor:pointer;background:var(--amarelo);
+      color:#0a0a0a;font-weight:800;padding:8px 12px;white-space:nowrap}
+    .badge{border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:#2b2b3f;color:#fff;opacity:.9}
+    .head-right{display:flex;align-items:center;gap:10px}
+    /* Conteúdo */
+    .content{position:absolute;top:90px;bottom:0;left:0;right:0;overflow-y:auto;
+      padding:0 16px 80px;display:flex;flex-direction:column;align-items:center;z-index:50;}
+    .lista{width:100%;max-width:980px;display:flex;flex-direction:column;gap:18px;}
+    .grupo{display:grid;grid-template-columns:92px 1fr;gap:14px;}
+    .dia{display:flex;flex-direction:column;align-items:center;justify-content:center;
+      font-family:'Bebas Neue',sans-serif;font-size:34px;color:#fff;line-height:1}
+    .dia small{color:var(--amarelo);font-size:12px;font-weight:800;margin-top:4px;letter-spacing:.5px}
+    .itens{border-left:4px solid var(--amarelo);padding-left:14px;display:flex;flex-direction:column;gap:12px;}
+    /* Cards */
+    .linha{background:var(--card);border:1px solid var(--line);border-radius:14px;
+      padding:18px 20px;display:flex;justify-content:space-between;align-items:center;
+      cursor:pointer;transition:.2s;font-size:1.05rem;box-shadow:0 8px 28px rgba(0,0,0,.25)}
+    .linha:hover{background:rgba(255,215,0,0.08);}
+    .linha .texto{font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:12px}
+    .linha .hora{color:var(--muted);font-weight:700;font-size:.95rem;margin-left:10px;}
+    .passado{background:var(--verde-claro)!important;border-color:rgba(0,255,128,0.4)!important;}
+    /* Botão + */
+    #addBtn{position:fixed;bottom:20px;right:20px;width:56px;height:56px;
+      border:none;border-radius:50%;background:var(--amarelo);color:#000;
+      font-size:32px;font-weight:900;cursor:pointer;z-index:200;box-shadow:0 6px 16px rgba(0,0,0,.45);}
+    /* Modais e loader */
+    #modal,#formModal,#loginModal,#loader{position:fixed;inset:0;display:none;align-items:center;
+      justify-content:center;background:rgba(0,0,0,.6);z-index:3000;}
+    .modal-box{width:min(92vw,460px);background:#101326;color:#fff;border-radius:16px;padding:18px;}
+    .modal-box h3{margin:0 0 10px;font-size:18px;display:flex;justify-content:space-between;align-items:center;}
+    .kv{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed rgba(255,255,255,.15);}
+    .kv:last-child{border-bottom:none;}
+    .kv b{color:var(--amarelo);font-weight:800}
+    .close{margin-top:14px;width:100%;}
+    #formModal .modal-box{background:#fff;color:#000;}
+    #formModal label{display:block;margin-top:10px;font-size:14px;font-weight:700}
+    #formModal input{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px;margin-top:6px;font-size:16px;}
+    #formModal .btn{margin-top:14px;width:100%;}
+    #formModal .btn.delete{background:#dc2626;color:#fff;}
+    #loginModal{background:rgba(0,0,0,.85);}
+    #loginBox{width:320px;background:#fff;color:#000;padding:20px;border-radius:12px;}
+    .spinner{width:60px;height:60px;border:6px solid rgba(255,255,255,0.2);
+      border-top:6px solid var(--amarelo);border-radius:50%;animation:spin 1s linear infinite;}
+    @keyframes spin{100%{transform:rotate(360deg);}}
+    @media (max-width:560px){
+      .title{font-size:28px}
+      header.titulo{padding:14px 12px}
+      .grupo{grid-template-columns:72px 1fr}
+    }
+  </style>
+</head>
+<body>
+  <div id="stars"></div><div id="stars-front"></div>
+
+  <header class="titulo">
+    <div class="brand">
+      <h1 class="title">Agenda</h1>
+      <h2 id="empresaNome" class="subtitle"></h2>
+    </div>
+    <div class="head-right">
+      <div id="rangeBadge" class="badge" title="Período selecionado"></div>
+      <button id="calendarBtn" class="btn">📅 Selecionar</button>
+    </div>
+  </header>
+
+  <div class="content"><main class="lista" id="lista"></main></div>
+
+  <!-- Login -->
+  <div id="loginModal"><div id="loginBox">
+    <h3>Login</h3>
+    <input type="password" id="senha" placeholder="Digite a senha"/>
+    <button class="btn" onclick="login()">Entrar</button>
+    <div id="loginMsg" style="color:#f44;margin-top:6px;"></div>
+  </div></div>
+
+  <!-- Modal detalhes -->
+  <div id="modal"><div class="modal-box">
+    <h3>Detalhes <span id="editBtn" style="cursor:pointer">✏️</span></h3>
+    <div class="kv"><span>Data</span><b id="m_data"></b></div>
+    <div class="kv"><span>Cantor</span><b id="m_cantor"></b></div>
+    <div class="kv"><span>Horário</span><b id="m_hora"></b></div>
+    <div class="kv"><span>Valor</span><b id="m_valor"></b></div>
+    <button class="btn close" onclick="fecharModal()">Fechar</button>
+  </div></div>
+
+  <!-- Modal form -->
+  <div id="formModal"><div class="modal-box">
+    <h3 id="formTitle">Novo</h3>
+    <label>Data</label><input type="date" id="f_data"/>
+    <label>Cantor</label><input type="text" id="f_cantor"/>
+    <label>Horário</label><input type="time" id="f_hora"/>
+    <label>Valor</label><input type="text" id="f_valor" inputmode="decimal" placeholder="0,00"/>
+    <button class="btn" onclick="salvarRegistro()">Salvar</button>
+    <button id="deleteBtn" class="btn delete" style="display:none" onclick="deleteRegistro()">Excluir</button>
+    <button class="btn" style="background:#ccc" onclick="fecharForm()">Cancelar</button>
+  </div></div>
+
+  <div id="loader"><div class="spinner"></div></div>
+  <button id="addBtn">+</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    /* ---------------- Estrelas ---------------- */
+    function criarEstrelas(qtd,container){
+      for(let i=0;i<qtd;i++){
+        const s=document.createElement('div');
+        s.className='star';
+        s.style.left=Math.random()*100+'vw';
+        s.style.width=s.style.height=(Math.random()*2+1)+'px';
+        s.style.opacity=Math.random()*0.8+0.2;
+        s.style.animationDuration=3+Math.random()*5+'s';
+        s.style.animationDelay=Math.random()*5+'s';
+        container.appendChild(s);
+      }
+    }
+    criarEstrelas(50,document.getElementById('stars'));
+    criarEstrelas(20,document.getElementById('stars-front'));
+
+    /* ---------------- Config ---------------- */
+const sb = window.supabase.createClient(
+  "https://dxkszikemntfusfyrzos.supabase.co",
+  "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
+);
+    
+    
+    const SENHAS={"0152":"Mercatto Delícia","1058":"Villa Gourmet","8486":"Delícia Gourmet"};
+    let EMPRESA=null,EDITANDO=null,filtroDe=null,filtroAte=null;
+
+    const pad=n=>String(n).padStart(2,'0');
+
+    // Normaliza data recebida (aceita yyyy-mm-dd, dd/mm/yyyy, Date, etc) -> 'yyyy-mm-dd'
+    function safeDateKey(input){
+      if(!input && input!==0) return null;
+      const s=String(input).trim();
+      if(!s) return null;
+      if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+      const m1=s.match(/(\d{2})\/(\d{2})\/(\d{4})/); // dd/mm/yyyy
+      if(m1) return `${m1[3]}-${m1[2]}-${m1[1]}`;
+      const m2=s.match(/(\d{4})-(\d{2})-(\d{2})/);
+      if(m2) return `${m2[1]}-${m2[2]}-${m2[3]}`;
+      const d=new Date(s);
+      if(!isNaN(d)) return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+      return null;
+    }
+
+    // Normaliza hora -> 'HH:mm'
+    function safeTime(raw){
+      if(raw===null||raw===undefined) return '--:--';
+      const s=String(raw).trim();
+      if(!s) return '--:--';
+      const m=s.match(/(\d{1,2}):(\d{2})/);
+      if(m) return `${pad(+m[1])}:${pad(+m[2])}`;
+      return s;
+    }
+
+    function brMoney(v){ return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+
+    function mostrarLoader(v=true){document.getElementById('loader').style.display=v?"flex":"none";}
+
+    /* ---------------- Login ---------------- */
+    function verificarLogin(){
+      const e=localStorage.getItem("empresa");
+      if(e){ EMPRESA=e; document.getElementById('empresaNome').textContent=EMPRESA;
+        document.getElementById('loginModal').style.display="none";
+        selecionarSemanaAtual(); carregarAgenda();
+      }else{
+        document.getElementById('loginModal').style.display="flex";
+      }
+    }
+    function login(){
+      const s=document.getElementById('senha').value.trim();
+      if(SENHAS[s]){
+        EMPRESA=SENHAS[s];
+        localStorage.setItem("empresa",EMPRESA);
+        document.getElementById('empresaNome').textContent=EMPRESA;
+        document.getElementById('loginModal').style.display="none";
+        selecionarSemanaAtual(); carregarAgenda();
+      }else{
+        document.getElementById('loginMsg').textContent="Senha incorreta.";
+      }
+    }
+
+    /* ---------------- Calendário / Semana ---------------- */
+    function selecionarSemanaAtual(){
+      const hoje=new Date();
+      const dow=hoje.getDay();              // 0..6 (Dom..Sáb)
+      const segunda=new Date(hoje); segunda.setDate(hoje.getDate()-((dow+6)%7));
+      const domingo=new Date(segunda); domingo.setDate(segunda.getDate()+6);
+      filtroDe=segunda; filtroAte=domingo;
+      calendar.setDate([segunda,domingo],true);
+      atualizarBadge();
+    }
+    function atualizarBadge(){
+      const fmt = d => `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+      const el=document.getElementById('rangeBadge');
+      if(filtroDe && filtroAte) el.textContent = `${fmt(filtroDe)} até ${fmt(filtroAte)}`;
+      else el.textContent = 'Sem filtro';
+    }
+    const calendar=flatpickr("#calendarBtn",{
+      mode:"range",dateFormat:"d/m/Y",locale:"pt",
+      onClose:(dates)=>{
+        filtroDe=dates[0]||null; filtroAte=dates[1]||null;
+        atualizarBadge(); carregarAgenda();
+      }
+    });
+
+    /* ---------------- CRUD / Render ---------------- */
+async function carregarAgenda(){
+  mostrarLoader(true);
+  const box=document.getElementById('lista');
+  box.innerHTML="";
+
+let { data:eventos, error } = await sb
+  .from("agenda_musicos")
+    .select("*")
+    .eq("empresa", EMPRESA)
+    .order("data", { ascending: true });
+
+  if(error){
+    console.error(error);
+    box.innerHTML="<p>Erro ao carregar.</p>";
+    mostrarLoader(false);
+    return;
+  }
+
+  if(!eventos || !eventos.length){
+    box.innerHTML="<p>Sem eventos cadastrados.</p>";
+    mostrarLoader(false);
+    return;
+  }
+
+  // FILTRO POR PERÍODO
+  if(filtroDe && filtroAte){
+    eventos = eventos.filter(ev=>{
+      const evDate = new Date(ev.data);
+      return evDate >= filtroDe && evDate <= filtroAte;
+    });
+  }
+
+  const grupos={};
+  for(const ev of eventos){
+    const key = ev.data;
+    (grupos[key] ||= []).push(ev);
+  }
+
+  const dias = Object.keys(grupos).sort();
+
+  for(const k of dias){
+
+    const dt = new Date(k);
+    const dia = pad(dt.getDate());
+    const mes = dt.toLocaleString('pt-BR',{month:'short'}).toUpperCase();
+
+    const itens = grupos[k].map(ev=>`
+      <div class="linha" onclick="abrirModal('${k}','${ev.id}','${ev.cantor}','${ev.hora}','${ev.valor}')">
+        <div class="texto">${ev.cantor}</div>
+        <div class="hora">${ev.hora}</div>
+      </div>
+    `).join("");
+
+    box.innerHTML += `
+      <section class="grupo">
+        <div class="dia">${dia}<small>${mes}</small></div>
+        <div class="itens">${itens}</div>
+      </section>`;
+  }
+
+  mostrarLoader(false);
+}
+
+function abrirModal(key,id,cantor,hora,valor){
+
+  const dt = new Date(`${key}T00:00:00`);
+
+  document.getElementById('m_data').textContent =
+    dt.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
+
+  document.getElementById('m_cantor').textContent = cantor;
+  document.getElementById('m_hora').textContent = safeTime(hora);
+  document.getElementById('m_valor').textContent = brMoney(valor);
+
+  EDITANDO = {
+    id: id,
+    data: key,
+    cantor,
+    hora: safeTime(hora),
+    valor
+  };
+
+  document.getElementById('modal').style.display="flex";
+}
+    function fecharModal(){ document.getElementById('modal').style.display="none"; }
+
+    // Abrir formulário para editar
+    document.getElementById('editBtn').onclick=()=>{
+      if(!EDITANDO) return;
+      document.getElementById('formTitle').textContent="Editar Registro";
+      document.getElementById('f_data').value = EDITANDO.data;           // yyyy-mm-dd
+      document.getElementById('f_cantor').value = EDITANDO.cantor;
+      document.getElementById('f_hora').value = safeTime(EDITANDO.hora); // HH:mm
+      document.getElementById('f_valor').value = EDITANDO.valor;
+      document.getElementById('deleteBtn').style.display="block";
+      fecharModal();
+      document.getElementById('formModal').style.display="flex";
+    };
+
+    // Criar novo
+    document.getElementById('addBtn').onclick=()=>{
+      EDITANDO=null;
+      document.getElementById('formTitle').textContent="Novo Registro";
+      document.getElementById('f_data').value="";
+      document.getElementById('f_cantor').value="";
+      document.getElementById('f_hora').value="";
+      document.getElementById('f_valor').value="";
+      document.getElementById('deleteBtn').style.display="none";
+      document.getElementById('formModal').style.display="flex";
+    };
+
+    function fecharForm(){ document.getElementById('formModal').style.display="none"; }
+
+  async function salvarRegistro(){
+
+  mostrarLoader(true);
+
+  const data  = document.getElementById('f_data').value;
+  const cantor= document.getElementById('f_cantor').value.trim();
+  const hora  = document.getElementById('f_hora').value;
+  let valor   = parseFloat(
+    String(document.getElementById('f_valor').value||'').replace(',','.')
+  ) || 0;
+
+  if(EDITANDO && EDITANDO.id){
+
+await sb
+  .from("agenda_musicos")
+      .update({ data, cantor, hora, valor })
+      .eq("id", EDITANDO.id);
+
+  } else {
+
+await sb
+  .from("agenda_musicos")
+      .insert([{
+        empresa: EMPRESA,
+        data,
+        cantor,
+        hora,
+        valor
+      }]);
+
+  }
+
+  fecharForm();
+  await carregarAgenda();
+}
+
+async function deleteRegistro(){
+
+  if(!EDITANDO || !EDITANDO.id) return;
+  if(!confirm("Deseja excluir?")) return;
+
+  mostrarLoader(true);
+
+await sb
+  .from("agenda_musicos")
+    .delete()
+    .eq("id", EDITANDO.id);
+
+  fecharForm();
+  await carregarAgenda();
+}
+
+    // Excluir botão (no form)
+    window.deleteRegistro = deleteRegistro;
+
+    // Inicialização
+    verificarLogin();
+  </script>
+</body>
+</html>
