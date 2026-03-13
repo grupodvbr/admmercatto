@@ -630,10 +630,11 @@ grupos[ev.data].push(ev)
 
 })
 
-Object.keys(grupos).forEach(d=>{
+Object.keys(grupos).forEach(dataStr=>{
 
-const itens=grupos[d].map(ev=>`
+const dataObj = new Date(dataStr + "T00:00")
 
+const itens=grupos[dataStr].map(ev=>`
 <div class="linha" onclick="editar('${ev.id}')">
 
 <div class="evento">
@@ -661,8 +662,8 @@ lista.innerHTML+=`
 
 <div class="dia">
 
-${d.getDate()}
-<small>${d.toLocaleString('pt-BR',{month:'short'})}</small>
+${dataObj.getDate()}
+<small>${dataObj.toLocaleString('pt-BR',{month:'short'})}</small>
 
 </div>
 
