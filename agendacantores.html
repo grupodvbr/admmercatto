@@ -391,6 +391,65 @@ background:transparent;
 background:rgba(255,215,0,.5);
 border-radius:10px;
 }
+
+/* ================= LOADING OVERLAY ================= */
+
+.loading{
+
+position:fixed;
+
+inset:0;
+
+background:rgba(0,0,0,.75);
+
+display:none;
+
+align-items:center;
+
+justify-content:center;
+
+z-index:9999;
+
+backdrop-filter:blur(3px);
+
+}
+
+.loading-box{
+
+background:#111324;
+
+padding:26px;
+
+border-radius:14px;
+
+border:1px solid rgba(255,255,255,.1);
+
+text-align:center;
+
+font-size:14px;
+
+}
+
+.spinner{
+
+width:36px;
+height:36px;
+
+border:3px solid rgba(255,255,255,.2);
+border-top:3px solid var(--gold);
+
+border-radius:50%;
+
+margin:auto;
+margin-bottom:10px;
+
+animation:spin 1s linear infinite;
+
+}
+
+@keyframes spin{
+to{transform:rotate(360deg)}
+}
 </style>
 
 </head>
@@ -721,6 +780,9 @@ return data.publicUrl
 
 async function salvarRegistro(){
 
+showLoading("Salvando...")
+
+try{
 let fotoURL=EDITANDO?.foto||null
 
 const file=f_foto.files[0]
@@ -761,12 +823,20 @@ await sb
 fecharForm()
 carregarAgenda()
 
+}finally{
+
+hideLoading()
+
+}
 }
 
 /* DELETE */
 
 async function deleteRegistro(){
 
+showLoading("Excluindo...")
+
+try{
 if(!EDITANDO)return
 
 if(!confirm("Excluir registro?"))return
@@ -778,6 +848,12 @@ await sb
 
 fecharForm()
 carregarAgenda()
+
+}finally{
+
+hideLoading()
+
+}
 
 }
 
@@ -817,7 +893,31 @@ img.src = URL.createObjectURL(file)
 img.style.display="block"
 
 })
-</script>
 
+function showLoading(text="Processando..."){
+
+loading.style.display="flex"
+
+loadingText.innerText=text
+
+}
+
+function hideLoading(){
+
+loading.style.display="none"
+
+}
+</script>
+<div class="loading" id="loading">
+
+<div class="loading-box">
+
+<div class="spinner"></div>
+
+<div id="loadingText">Processando...</div>
+
+</div>
+
+</div>
 </body>
 </html>
